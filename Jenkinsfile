@@ -2,21 +2,41 @@ pipeline
 {
   agent any 
 
-  stages
+  tools
     {
-    stage('hello')
+    maven 'maven'
+    {
+      stages {
+        stage ("clan up ")
+      steps {
+        deleteDir()
+      }
+      }
+    stage("Clone repo")
     {
       steps
     {
-        echo 'hello world'
+        sh " git clone http://github.com/Mabouz/exp1-spring.git "
     }
     }
-    stage('Build')
+     stage("Generate backend image")
     {
       steps
     {
-        echo 'Dev'
+        dir ("exp1.spring"){
+          sh "mvn clean install"
+          sh " docker build -t docexp1.spring ."
+          
     }
+    } 
     }
+      stage ("Run docker compose") {
+        steps {
+          dir ("exp1.spring"){
+            sh " docker compose up -d"
+                             }
+              }
+                                   }
     }
+}
 }
